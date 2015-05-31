@@ -11,14 +11,14 @@ set -e
 # --------------------------------------------------------------------------------------------
 
 # SET THE VARIABLES BELOW
-eip="1.2.3.4"
-eipallocation="eipalloc-12345678"
-hostname=""
+eip="1.2.3.4"                                   # The EIP you wish to keep consistently attached
+eipallocation="eipalloc-12345678"               # The Allocation ID of the EIP above
+hostname="MYHOST"                               # A handy name to tag the new "Master" instance with the EIP
 simpledate=`date +%Y%m%d`
-awsprofile="default"
-asgroup="MY-AS-GROUP"
-pushovertoken=""
-pushoveruser""
+awsprofile="default"                            # The AWS CLI profile for all commands
+asgroup="MY-AS-GROUP"                           # The name of your EC2 AutoScalingGroup
+pushovertoken=""                                # Your Pushover API token
+pushoveruser=""                                 # Your Pushover API user
 # --------------------------------------------------------------------------------------------
 
 # Query for node 0 in the ASG and get its health status
