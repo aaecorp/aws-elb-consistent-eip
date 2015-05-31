@@ -11,9 +11,11 @@ Keep an elastic IP consistently attached to an ELB
 
 ## Installation
   - Install both scripts in a directory such as /root/scripts/. (Search the scripts for this path and replace accordingly.)
+  - Be sure your path to the 'aws' executable is used in the scripts. This is often `/usr/bin/aws`
+  - If you use AWS CLI profiles, specify your profile as needed in the variable.
   - Configure all static variables at the top of each script.
   - Create an SQS queue and enter the appropriate queue variables into your scripts.
   - After creating an auto-scaling group in EC2, create a notification to be sent to your SQS queue upon ASG terminations.
-  - Set the SQS script to be executed by cron every N minutes. When the SQS polling script detects a message, it will trigger the second script.
+  - Set the SQS script to be executed by cron every `N` minutes. When the SQS polling script detects a message, it will trigger the second script.
 
-If you don't want to implement Pushover notifications upon reattachment, remove or comment out all the 'curl' commands. Or adapt them to your own notifications.
+If you don't want to implement Pushover notifications upon reattachment, remove or comment out all the `curl` commands. Or adapt them to your own notifications.
