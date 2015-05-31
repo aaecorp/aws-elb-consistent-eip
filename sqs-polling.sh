@@ -11,9 +11,9 @@ set -e
 # --------------------------------------------------------------------------------------------
 
 # SET THE VARIABLES BELOW
-sqsurl="https://sqs.us-east-1.amazonaws.com/1234567890/MY-QUEUE-NAME"
-sqsqueue="MY-QUEUE-NAME"
-awsprofile="default"
+sqsurl="https://sqs.us-east-1.amazonaws.com/1234567890/MY-QUEUE-NAME"    # The URL of your SQS queue
+sqsqueue="MY-QUEUE-NAME"                                                 # The name of your SQS queue
+awsprofile="default"                                                     # The AWS CLI profile to use
 # --------------------------------------------------------------------------------------------
 
 message=`/usr/bin/aws --profile $awsprofile sqs receive-message --queue-url $sqsurl --wait-time-seconds 20`
@@ -24,6 +24,7 @@ receipthandle=`echo $message | jq -r .Messages[0].ReceiptHandle`
 if [[ "$subject" == *"termination"* ]]
 then
     if [ $verbose ]; then echo "Subject PASS - $subject"; fi
+    # Depending upon where your scripts are installed, adjust below:
     /bin/bash /root/scripts/fixed-ip.sh
     /usr/bin/aws --profile $awsprofile sqs delete-message --queue-url $sqsurl --receipt-handle $receipthandle 
 else
