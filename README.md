@@ -10,7 +10,7 @@ Keep an elastic IP consistently attached to an ELB
   - AWS EC2 elastic IP
 
 ## Installation
-  - Install both scripts in a directory such as /root/scripts/. (Search the scripts for this path and replace accordingly.)
+  - Install both scripts in a directory such as `/root/scripts/`. (Search the scripts for this path and replace accordingly.)
   - Be sure your path to the 'aws' executable is used in the scripts. This is often `/usr/bin/aws`
   - If you use AWS CLI profiles, specify your profile as needed in the variable.
   - Configure all static variables at the top of each script.
