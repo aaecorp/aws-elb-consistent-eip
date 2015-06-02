@@ -15,8 +15,8 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>aws-elb-consistent-eip</h1>
-        <p>Keep an elastic IP consistently attached to an ELB</p>
+        <h1>ELB Consistent IP</h1>
+        <p>Keep an elastic IP consistently attached to an ELB.</p>
 
         <p class="view"><a href="https://github.com/aaecorp/aws-elb-consistent-eip">View the Project on GitHub <small>aaecorp/aws-elb-consistent-eip</small></a></p>
 
@@ -30,7 +30,7 @@
       <section>
 <h2>Objective</h2>
 <p>While Amazon Route53 allows you to map a zone apex [<code>domain.com</code>] to an Elastic Load Balancer, you don't always have the ability to control DNS for a zone, or to move it into Route53. Therefore you need a consistent, persistent, public IP that you can map to. This script ensures that the Elastic IP you provision will stay mapped to an active instance within your EC2 Auto-Scaling Group.</p>
-<hr>
+
 
 <h3>Requirements</h3>
 <ul>
@@ -40,53 +40,50 @@
  <li>AWS SQS queue
  <li>AWS EC2 autoscaling group
  <li>AWS EC2 elastic IP
+ <li>bash and curl
 </ul>
-<hr>
+
 
 <h3>SQS Queue Setup</h3>
-
 <ul>
- <li>Create an SQS queue and set the Default Visibility Timeout to 30 seconds. This script uses SQS "long polling" which means it will continue to poll for a response for 20 seconds. That leaves only a possible 10-second window when a message will arrive before it is detected.
- <li>Message Retention Period can be set to something short, 15 mins will work well. These messages are designed to be picked up and acted upon within very short order, then deleted.
- <li>Receive Message Wait Time should be set to 0
+ <li>Create an SQS queue and set the <code>Default Visibility Timeout</code> to 30 seconds. This script uses SQS "long polling" which means it will continue to poll for a response for 20 seconds. That leaves only a possible 10-second window when a message will arrive before it is detected.
+ <li><code>Message Retention Period</code> can be set to something short, 15 mins will work well. These messages are designed to be picked up and acted upon within very short order, then deleted.
+ <li><code>Receive Message Wait Time</code> should be set to 0
 </ul>
-<hr>
+
 
 <h3>EC2 Auto-Scaling Setup</h3>
-
 <ul>
- <li>Create your Launch Configuration and Auto-Scaling Group as you normally would.
- <li>In the Notification properties of your Auto-Scaling Group, create a notification to be sent whenever an instance is terminated. The notification should be pointed to the SQS queue you create above.
+ <li>Create your Launch Configuration and Auto-Scaling Group (ASG)as you normally would.
+ <li>In the Notification properties of your ASG, create a notification to be sent whenever an instance is terminated. The notification should be pointed to the SQS queue you create above.
 </ul>
-<hr>
+
 
 <h3>Script Installation</h3>
-
 <ul>
- <li>Install both scripts in a directory such as /root/scripts/. (Search the scripts for this path and replace accordingly.)
- <li>Be sure your path to the 'aws' executable is used in the scripts. This is often /usr/bin/aws
+ <li>Install both scripts in a directory such as <code>/root/scripts/</code>. (Search the scripts for this path and replace accordingly.)
+ <li>Be sure your path to the 'aws' executable is used in the scripts. This is often <code>/usr/bin/aws</code>.
  <li>If you use AWS CLI profiles, specify your profile as needed in the variable.
  <li>Configure all static variables at the top of each script.
  <li>Create an SQS queue and enter the appropriate queue variables into your scripts.
  <li>After creating an auto-scaling group in EC2, create a notification to be sent to your SQS queue upon ASG terminations.
- <li>Set the SQS script to be executed by cron every N minutes. When the SQS polling script detects a message, it will trigger the second script.
+ <li>Set the SQS script to be executed by cron every N minutes. When the SQS polling script detects a message, it will trigger the second script. Polling every 1-5 minutes is recommended.
 </ul>
-<hr>
+
 
 <h3>Pushover Notifications</h3>
-
 <p>If you don't want to implement Pushover notifications upon reattachment, remove or comment out all the curl commands. Or adapt them to your own notifications.</p>
-<hr>
+<p>If you do want to implement Pushover notifications to your mobile device, create a Pushover account and get your <code>Token</code> and <code>User</code> keys. These are long and ugly, but will allow the script to send messages via <code>curl</code>.</p>
+
 
 <h3>EIP Attachment Workflow</h3>
-
 <ol>
  <li>Upon a scale-out event of your ASG (Auto-Scaling Group) new instances are added as necessary. The EIP remains unaffected and in-use.
  <li>Upon a scale-in event of your ASG, when instances are terminated, the script will assist you by ensuring the EIP continues to be attached to a healthy, active EC2 instance. The termination ASG notification will create a message in the SQS queue.
  <li>The SQS polling script, which checks for messages every N seconds/minutes, when it discovers the message waiting for pickup, triggers the secondary script.
  <li>Finally, the fixed-ip script examines the ELB for healthy (remaining) instances and reattaches the EIP if necessary. After completion it both removes the SQS message and sends a Pushover notification via curl.
 </ol>
-<hr>
+
 
       </section>
       <footer>
