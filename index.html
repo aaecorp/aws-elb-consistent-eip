@@ -34,7 +34,7 @@
 
 <h3>Requirements</h3>
 <ul>
- <li>AWS-CLI - <a target="_new" href="http://aws.amazon.com/cli/">http://aws.amazon.com/cli/</a>
+ <li>aws command-line - <a target="_new" href="http://aws.amazon.com/cli/">http://aws.amazon.com/cli/</a>
  <li>jq - <a target="_new" href="http://stedolan.github.io/jq/">http://stedolan.github.io/jq/</a>
  <li>Pushover API token/user (optional) - <a target="_new" href="https://pushover.net/">https://pushover.net/</a>
  <li>An AWS SQS queue
@@ -54,7 +54,7 @@
 
 <h3>EC2 Auto-Scaling Setup</h3>
 <ul>
- <li>Create your Launch Configuration and Auto-Scaling Group (ASG) as you normally would.
+ <li>Create your Launch Configuration and Auto-Scaling Group (ASG) as you normally would. More information about setting this up is <a href="http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/GettingStartedTutorial.html" target="_new">available here</a>.
  <li>In the Notification properties of your ASG, create a notification to be sent whenever an instance is terminated. The notification should be pointed to the SQS queue you create above.
 </ul>
 
@@ -67,7 +67,9 @@
  <li>Configure all static variables at the top of each script.
  <li>Create an SQS queue and enter the appropriate queue variables into your scripts.
  <li>After creating an auto-scaling group in EC2, create a notification to be sent to your SQS queue upon ASG terminations.
- <li>Set the SQS script to be executed by cron every N minutes. When the SQS polling script detects a message, it will trigger the second script. Polling every 1-5 minutes is recommended.
+ <li>Set the SQS script to be executed by cron every N minutes. When the SQS polling script detects a message, it will trigger the second script. Polling every 1-5 minutes is recommended, i.e.:
+ <pre><code>* * * * * /root/scripts/sqs-polling.sh >/dev/null 2>&1</code></pre> (polling every minute)<br />
+ <pre><code>0-59/5 * * * * /root/scripts/sqs-polling.sh >/dev/null 2>&1</code></pre> (polling every 5 minutes)<br />
 </ul>
 
 
