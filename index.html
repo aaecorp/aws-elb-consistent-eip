@@ -31,16 +31,15 @@
 <h2>Objective</h2>
 <p>While Amazon Route53 allows you to map a zone apex [<code>domain.com</code>] to an Elastic Load Balancer, you don't always have the ability to control DNS for a zone, or to move it into Route53. Therefore you need a consistent, persistent, public IP that you can map to. This script ensures that the Elastic IP you provision will stay mapped to an active instance within your EC2 Auto-Scaling Group.</p>
 
-
 <h3>Requirements</h3>
 <ul>
- <li>aws command-line - <a target="_new" href="http://aws.amazon.com/cli/">http://aws.amazon.com/cli/</a>
- <li>jq - <a target="_new" href="http://stedolan.github.io/jq/">http://stedolan.github.io/jq/</a>
+ <li><code>aws</code> command-line tools - <a target="_new" href="http://aws.amazon.com/cli/">http://aws.amazon.com/cli/</a>
+ <li><code>jq</code> - <a target="_new" href="http://stedolan.github.io/jq/">http://stedolan.github.io/jq/</a>
  <li>Pushover API token/user (optional) - <a target="_new" href="https://pushover.net/">https://pushover.net/</a>
  <li>An AWS SQS queue
  <li>An AWS EC2 autoscaling group
  <li>An AWS EC2 elastic IP
- <li>bash and curl
+ <li><code>bash</code> and <code>curl</code>.
 </ul>
 
 
@@ -63,13 +62,12 @@
 <ul>
  <li>Install both scripts in a directory such as <code>/root/scripts/</code>. (Search the scripts for this path and replace accordingly.)
  <li>Be sure your path to the 'aws' executable is used in the scripts. This is often <code>/usr/bin/aws</code>.
- <li>If you use AWS CLI profiles, specify your profile as needed in the variable.
- <li>Configure all static variables at the top of each script.
+ <li>If you use AWS CLI profiles, specify your profile as needed in the variable of each script. If you have only one profile, leave this as <code>default</code>.
+ <li>Configure all other static variables at the top of each script.
  <li>Create an SQS queue and enter the appropriate queue variables into your scripts.
  <li>After creating an auto-scaling group in EC2, create a notification to be sent to your SQS queue upon ASG terminations.
  <li>Set the SQS script to be executed by cron every N minutes. When the SQS polling script detects a message, it will trigger the second script. Polling every 1-5 minutes is recommended, i.e.:
- <pre><code>* * * * * /root/scripts/sqs-polling.sh >/dev/null 2>&1</code></pre> (polling every minute)<br />
- <pre><code>0-59/5 * * * * /root/scripts/sqs-polling.sh >/dev/null 2>&1</code></pre> (polling every 5 minutes)<br />
+ <pre><code>* * * * * /root/scripts/sqs-polling.sh >/dev/null 2>&1</code></pre>
 </ul>
 
 
@@ -81,11 +79,13 @@
 <h3>EIP Attachment Workflow</h3>
 <ol>
  <li>Upon a scale-out event of your ASG (Auto-Scaling Group) new instances are added as necessary. The EIP remains unaffected and in-use.
- <li>Upon a scale-in event of your ASG, when instances are terminated, the script will assist you by ensuring the EIP continues to be attached to a healthy, active EC2 instance. The termination ASG notification will create a message in the SQS queue.
+ <li>Upon a scale-in event of your ASG, when instances are terminated, the script will assist you by ensuring the EIP continues to be attached to a healthy, active EC2 instance. The ASG termination notification will create a message in the SQS queue.
  <li>The SQS polling script, which checks for messages every N seconds/minutes, when it discovers the message waiting for pickup, triggers the secondary script.
- <li>Finally, the fixed-ip script examines the ELB for healthy (remaining) instances and reattaches the EIP if necessary. After completion it both removes the SQS message and sends a Pushover notification via curl.
+ <li>Finally, the fixed-ip script examines the ELB for healthy (remaining) instances and reattaches the EIP if necessary. After completion it both removes the SQS message and sends a Pushover notification via <code>curl</code>.
 </ol>
 
+<h3>Questions / Comments?</h3>
+<p>If you have any questions or comments please add them to the <a href="https://github.com/aaecorp/aws-elb-consistent-eip/issues">issues page</a> for this project.</p>
 
       </section>
       <footer>
