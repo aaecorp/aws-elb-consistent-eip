@@ -1,5 +1,5 @@
 # aws-elb-consistent-eip
-Keep an elastic IP consistently attached to an ELB
+Keep an elastic IP consistently attached to a node within an auto-scaling group behind an ELB. A typical use-case for these scripts is a large, multi-site web deployment where many/most domains can be mapped to an ELB (using Route53 aliases to zone apexes), but where some domains still require DNS to point to a fixed public IP address. When deploying you should keep in mind that sites pointing directly to the EIP will put a specific EC2 instance under load and will not be sifted evenly across healthy nodes of your ELB/ASG.
 
 ## Requirements
 Software:
