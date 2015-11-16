@@ -3,7 +3,7 @@
 set -e
 
 # --------------------------------------------------------------------------------------------
-# This script written by Neal Magee <neal.magee@aaec.net> - ver 1.2 4/10/2015
+# This script written by Neal Magee <neal.magee@aaec.net> - ver 1.3 11/11/2015
 # --------------------------------------------------------------------------------------------
 # Polling script using the AWS CLI to check for healthy nodes in an auto-scaling group,
 # and then either verify that a healthy node has the 1.2.3.4 elastic IP, or attach
@@ -13,12 +13,12 @@ set -e
 # SET THE VARIABLES BELOW
 eip="1.2.3.4"                                   # The EIP you wish to keep consistently attached
 eipallocation="eipalloc-12345678"               # The Allocation ID of the EIP above
-hostname="MYHOST"                               # A handy name to tag the new "Master" instance with the EIP
-simpledate=`date +%Y%m%d`
+hostname="MYHOST"                               # A friendly name with which to tag the new "Master" in the ASG
 awsprofile="default"                            # The AWS CLI profile for all commands
-asgroup="MY-AS-GROUP"                           # The name of your EC2 AutoScalingGroup
+asgroup="MY-AUTOSCALING-GROUP"                  # The name of your EC2 AutoScalingGroup
 pushovertoken=""                                # Your Pushover API token
 pushoveruser=""                                 # Your Pushover API user
+simpledate=`date +%Y%m%d`
 # --------------------------------------------------------------------------------------------
 
 # Query for node 0 in the ASG and get its health status

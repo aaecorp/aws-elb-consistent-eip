@@ -2,11 +2,14 @@
 Keep an elastic IP consistently attached to an ELB
 
 ## Requirements
+Software:
   - AWS-CLI - http://aws.amazon.com/cli/
   - jq - http://stedolan.github.io/jq/
   - Pushover API token/user (optional) - https://pushover.net/
-  - AWS SQS queue
+
+AWS Resources:
   - AWS EC2 autoscaling group (ASG)
+  - AWS SQS queue
   - AWS EC2 elastic IP
 
 ## SQS Queue Setup

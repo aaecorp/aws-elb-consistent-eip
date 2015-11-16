@@ -2,19 +2,19 @@
 
 set -e
 
-# --------------------------------------------------------------------------------------------
-# This script written by Neal Magee <neal.magee@aaec.net> - ver 1.2 4/10/2015
-# --------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------
+# This script written by Neal Magee <neal.magee@aaec.net> - ver 1.3 11/11/2015
+# --------------------------------------------------------------------------------------------------------
 # Polling script using the AWS CLI to check for healthy nodes in an auto-scaling group,
 # and then either verify that a healthy node has the elastic IP, or assign it to the first
 # healthy node it finds.
-# --------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------
 
 # SET THE VARIABLES BELOW
-sqsurl="https://sqs.us-east-1.amazonaws.com/1234567890/MY-QUEUE-NAME"    # The URL of your SQS queue
-sqsqueue="MY-QUEUE-NAME"                                                 # The name of your SQS queue
-awsprofile="default"                                                     # The AWS CLI profile to use
-# --------------------------------------------------------------------------------------------
+sqsurl="https://sqs.us-east-1.amazonaws.com/1234567890/MY-SQS-QUEUE-NAME"    # The URL of your SQS queue
+sqsqueue="MY-SQS-QUEUE-NAME"                                                 # The name of your SQS queue
+awsprofile="default"                                                         # The AWS CLI profile to use
+# --------------------------------------------------------------------------------------------------------
 
 message=`/usr/bin/aws --profile $awsprofile sqs receive-message --queue-url $sqsurl --wait-time-seconds 20`
 subject=`echo $message | jq -r .Messages[0].Body | jq -r .Subject`
